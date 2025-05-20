@@ -1,0 +1,22 @@
+services:
+  db:
+    container_name: unlocker_postgres
+    image: postgres:16.3
+    environment:
+      POSTGRES_USER: unlocker
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: unlocker
+      TZ: UTC
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'polls_pg_data:/var/lib/postgresql/data'
+    networks:
+      - postgres-compose-network
+
+volumes:
+  polls_pg_data:
+
+networks:
+  postgres-compose-network:
+    driver: bridge

@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "@modules/*": ["src/base/modules/*"],
+      "@controllers/*": ["src/base/controllers/*"],
+      "@repositories/*": ["src/base/repositories/*"],
+      "@database/*": ["src/base/database/*"],
+      "@services/*": ["src/common/services/*"],
+      "@pipes/*": ["src/common/pipes/*"],
+      "@validators/*": ["src/common/validators/*"],
+      "@decorators/*": ["src/common/decorators/*"],
+      "@dtos/*": ["src/common/dtos/*"],
+      "@*": ["src/*"]
+    },
+    "incremental": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

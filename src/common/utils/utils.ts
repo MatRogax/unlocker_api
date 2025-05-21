@@ -14,8 +14,4 @@ export class DateUtils {
     const formattedDate = date.format(this.dateFormat);  
     return formattedDate;
   }
-
-  static getFormattedDateSP(format = 'YYYY-MM-DD HH:mm:ss'): string {
-    return dayjs().tz('America/Sao_Paulo').format(format)
-  }
 }

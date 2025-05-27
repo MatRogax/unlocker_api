@@ -1,4 +1,5 @@
 import { ResponseAuthModel } from "@common/models/response-auth.model";
+import { Utils } from "@common/utils/utils";
 import { PrismaService } from "@database/prisma.service";
 import { CreateUserDto } from "@dtos/create-user.dto";
 import { UpdateUserDto } from "@dtos/update-user.dto";
@@ -11,8 +12,12 @@ export class UserRepository implements AbstractUserRepository {
     constructor(private readonly prisma: PrismaService) { }
     async create(dataCreateUser: CreateUserDto): Promise<User> {
         try {
-            const createUser = this.prisma.user.create({
-                data: dataCreateUser
+            const createUser = await this.prisma.user.create({
+                data: {
+                    ...dataCreateUser,
+                    createdAt: Utils.getCurrentDateTime(),
+                    updatedAt: Utils.getCurrentDateTime(),
+                },
             })
             return createUser;
         } catch (err) {
@@ -74,5 +79,4 @@ export class UserRepository implements AbstractUserRepository {
             throw new BadRequestException('Nao foi possivel deletar o usuário: ' + error);
         }
     }
-
 }

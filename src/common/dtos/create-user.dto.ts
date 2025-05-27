@@ -1,6 +1,6 @@
 import { Transform } from "class-transformer";
 import { IsDateString, IsEnum, IsNotEmpty, IsString, IsStrongPassword } from "class-validator";
-import { Role } from '@prisma/client'; 
+import { Role } from '@prisma/client';
 
 
 export class CreateUserDto {
@@ -18,20 +18,14 @@ export class CreateUserDto {
     @IsString()
     steamId?: string;
 
-   @IsNotEmpty()
-   @IsStrongPassword({
-    minLength: 6,
-    minLowercase: 0,
-   })
+    @IsNotEmpty()
+    @IsStrongPassword({
+        minLength: 6,
+        minLowercase: 0,
+    })
     password: string;
 
     @Transform(({ value }) => value?.toUpperCase())
     @IsEnum(Role)
     role: Role;
-
-    @IsDateString()
-    createdAt: Date
-
-    @IsDateString()
-    updatedAt: Date
 }

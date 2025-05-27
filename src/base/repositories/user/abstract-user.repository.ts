@@ -1,7 +1,7 @@
 import { ResponseAuthModel } from "@common/models/response-auth.model";
-import { CreateUserDto } from "@dtos/create-user.dto";
 import { UpdateUserDto } from "@dtos/update-user.dto";
 import { User } from "@prisma/client";
+import { CreateUserDto } from "@dtos/create-user.dto";
 
 export abstract class AbstractUserRepository {
     abstract create(data: CreateUserDto): Promise<User>;

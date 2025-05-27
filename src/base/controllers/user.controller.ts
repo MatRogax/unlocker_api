@@ -8,8 +8,8 @@ export class UserController {
     constructor(private readonly repository: AbstractUserRepository) { }
     @Post('create')
     async create(@Body() data: CreateUserDto): Promise<User> {
-        const response = await this.repository.findOne(data.email);
-        return response
+        const response = await this.repository.create(data);
+        return response;
     }
     @Get(':id')
     async findUser(@Param('id') id: string): Promise<User> {

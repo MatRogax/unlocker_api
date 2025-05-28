@@ -1,15 +1,20 @@
-import { ResponseAuthModel } from "@common/models/response-auth.model";
+import { AuthCreateModel } from "@common/models/auth-create.mode";
+import { AuthResponseModel } from "@common/models/auth-response.model";
 import { Utils } from "@common/utils/utils";
 import { PrismaService } from "@database/prisma.service";
 import { CreateUserDto } from "@dtos/create-user.dto";
+import { LoginDto } from "@dtos/login-dto";
 import { UpdateUserDto } from "@dtos/update-user.dto";
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { User } from "@prisma/client";
+import { AbstractAuthrepository } from "@repositories/auth/abstrac-auth.repository";
 import { AbstractUserRepository } from "@repositories/user/abstract-user.repository";
+import { AuthService } from "@services/auth.service";
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserRepository implements AbstractUserRepository {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(private readonly prisma: PrismaService, private readonly auth: AbstractAuthrepository, private readonly authService: AuthService,) { }
     async create(dataCreateUser: CreateUserDto): Promise<User> {
         try {
             const createUser = await this.prisma.user.create({
@@ -24,9 +29,36 @@ export class UserRepository implements AbstractUserRepository {
             throw new InternalServerErrorException('Ocorreu um Erro ao criar usuário.');
         }
     }
-    //TODO -> utilizar o passport para authenticação de usuários 
-    async login(email: string, password: string): Promise<ResponseAuthModel> {
-        throw new Error("Method not implemented.");
+
+    async login(login: LoginDto, device: string): Promise<AuthResponseModel> {
+
+        const user = await this.findByEmail(login.email);
+        const token = await this.authService.generateToken(user);
+
+        const isPasswordMatching = await bcrypt.compare(login.password, user.password);
+
+        if (!user || !isPasswordMatching) {
+            throw new NotFoundException('usuario e/ou senha incorreto Invalido(OS)');
+        }
+
+        const authData: AuthCreateModel = {
+            token: token.token,
+            userId: user.id,
+            expiresAt: token.expiresAt,
+        }
+
+        await this.auth.authUser(authData, device);
+
+        const response: AuthResponseModel = {
+            token: token.token,
+            expiresAt: token.expiresAt,
+            userId: user.id,
+            username: user.name,
+        }
+
+        return response;
+
+
     }
     async findOne(id: string): Promise<User> {
         try {
@@ -41,7 +73,18 @@ export class UserRepository implements AbstractUserRepository {
         }
     }
 
-    async findAll(limit = 10): Promise<User[]> {
+    async findByEmail(email: string): Promise<User> {
+
+        const findUser = await this.prisma.user.findUnique({
+            where: {
+                email
+            }
+        })
+        return findUser;
+
+    }
+
+    async findAll(limit: number = 10): Promise<User[]> {
         try {
             const users = await this.prisma.user.findMany({
                 take: limit,

@@ -28,16 +28,16 @@ model User {
   password  String?
   createdAt String
   updatedAt String
-  Token     Token[]
+  Token     Auth[]
   Order     Order[]
 }
 
-model Token {
+model Auth {
   id        Int      @id @default(autoincrement())
   userId    String
-  token     String
-  createdAt DateTime
-  updatedAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   expiresAt DateTime
   device    String
 

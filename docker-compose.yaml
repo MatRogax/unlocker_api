@@ -20,3 +20,31 @@ volumes:
 networks:
   postgres-compose-network:
     driver: bridge
+
+
+    version: '3.8' # Ou uma versão compatível mais recente
+
+services:
+  minio:
+    image: minio/minio:RELEASE.2024-05-23T03-25-13Z # Recomenda-se usar uma tag de versão específica em vez de :latest para estabilidade
+    container_name: minio_server_dev # Nome opcional para o container
+    ports:
+      - "9000:9000" # Porta da API do MinIO
+      - "9001:9001" # Porta do Console Web do MinIO
+    environment:
+      MINIO_ROOT_USER: minioadmin       # Usuário root (para acesso à API e ao console)
+      MINIO_ROOT_PASSWORD: minioadmin   # Senha root
+      # MINIO_DEFAULT_BUCKETS: "product-images" # Opcional: cria o bucket automaticamente na inicialização
+    volumes:
+      - minio_data:/data   # Monta um volume nomeado para persistir os dados do MinIO
+                           # Os arquivos do bucket serão armazenados em /data dentro do container
+    command: server /data --console-address ":9001" # Comando para iniciar o servidor MinIO
+    healthcheck: # Opcional, mas útil para verificar se o MinIO está saudável
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 10s # Dá um tempo para o container iniciar antes de começar os healthchecks
+
+volumes:
+  minio_data: {} # Define o volume nomeado 'minio_data'. O Docker gerencia onde este volume é armazenado.

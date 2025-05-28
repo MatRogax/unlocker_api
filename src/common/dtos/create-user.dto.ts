@@ -1,6 +1,6 @@
-import { Transform } from "class-transformer";
-import { IsDateString, IsEnum, IsNotEmpty, IsString, IsStrongPassword } from "class-validator";
 import { Role } from '@prisma/client';
+import { Transform } from "class-transformer";
+import { IsEnum, IsNotEmpty, IsString, IsStrongPassword } from "class-validator";
 
 
 export class CreateUserDto {
@@ -21,6 +21,9 @@ export class CreateUserDto {
     @IsNotEmpty()
     @IsStrongPassword({
         minLength: 6,
+        minUppercase: 1,
+        minSymbols: 1,
+        minNumbers: 1,
         minLowercase: 0,
     })
     password: string;

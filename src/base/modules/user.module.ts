@@ -1,11 +1,12 @@
 import { UserController } from '@controllers/user.controller';
+import { DatabaseModule } from '@modules/database.module';
 import { Module } from '@nestjs/common';
 import { AbstractUserRepository } from '@repositories/user/abstract-user.repository';
 import { UserRepository } from '@repositories/user/user.repository';
-import { DatabaseModule } from '@modules/database.module';
+import { AuthModule } from './auth.module';
 
 @Module({
-    imports: [DatabaseModule],
+    imports: [DatabaseModule, AuthModule],
     controllers: [UserController],
     providers: [{ provide: AbstractUserRepository, useClass: UserRepository }],
 })
